@@ -131,7 +131,15 @@ class BoardData {
     this.delaySave();
   }
 
-  /** Process a batch of messages
+	/** Removes all data from the board
+	 */
+	deleteall() {
+		//KISS
+		this.board = [];
+		this.delaySave();
+	}
+
+	/** Process a batch of messages
    * @typedef {{
    *  id:string,
    *  type: "delete" | "update" | "child",
