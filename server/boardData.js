@@ -164,6 +164,9 @@ class BoardData {
       case "delete":
         if (id) this.delete(id);
         break;
+      case "deleteall":
+        this.deleteall();
+        break;
       case "update":
         if (id) this.update(id, message);
         break;
