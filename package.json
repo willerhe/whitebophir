@@ -11,12 +11,14 @@
     "accept-language-parser": "^1.5.0",
     "async-mutex": "^0.3.1",
     "handlebars": "^4.7.7",
+    "knex": "^0.95.6",
+    "mysql": "^2.18.1",
     "polyfill-library": "^3.104.0",
     "serve-static": "^1.14.1",
     "socket.io": "^3.1.2"
   },
   "scripts": {
-    "start": "node ./server/server.js",
+    "start": "PORT=3003 node ./server/server.js",
     "test": "nightwatch tests"
   },
   "main": "./server/server.js",
