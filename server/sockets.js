@@ -1,6 +1,7 @@
 var iolib = require("socket.io"),
   log = require("./log.js").log,
-  BoardData = require("./boardData.js").BoardData,
+  // BoardData = require("./boardData.js").BoardData,
+  BoardData = require("./boardData-mysql.js").BoardDataMysql,
   config = require("./configuration");
 
 /** Map from name to *promises* of BoardData
