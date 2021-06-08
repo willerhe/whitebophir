@@ -134,7 +134,7 @@ class BoardData {
 	/** Clear all data from the board
 	 */
   clear() {
-		this.board = [];
+		this.board = {};
 		this.delaySave();
 	}
 
@@ -216,6 +216,7 @@ class BoardData {
 
   /** Save the board to disk without preventing multiple simultaneaous saves. Use save() instead */
   async _unsafe_save() {
+    log("save board data use default", { name: this.name });
     this.lastSaveDate = Date.now();
     this.clean();
     var file = this.file;

@@ -27,46 +27,31 @@
  * @date 2021-06-07 12:47:44
  */
 
-const { BoardData } = require('./boardData')
+const { BoardData:BoardDataMysql } = require('./boardData')
+const mysql = require('../server/mysql').mysql
 
-const knex = require('knex')({
-  client: 'mysql',
-  connection: {
-    host : '127.0.0.1',
-    user : 'root',
-    password : 'root',
-    database : 'mm-site-d0'
-  }
-});
+var fs = require("./fs_promises.js"),
+  log = require("./log.js").log;
 
+BoardDataMysql.prototype.get = function(id){
+  log('get board data from mysql database',id)
+  return this.board[id]
+}
 
-class BoardDataMysql extends BoardData {
-
-  /** Reads data from the board
-   * @param {string} id - Identifier of the element to get.
-   * @returns {BoardElem} The element with the given id, or undefined if no element has this id
-   */
-  get(id) {
-    return this.board[id];
-  }
-
-  /** Reads data from the board
-   * @param {string} [id] - Identifier of the first element to get.
-   * @returns {BoardElem[]}
-   */
-  getAll(id) {
-    return Object.entries(this.board)
+BoardDataMysql.prototype.getAll = function(id){
+  return Object.entries(this.board)
       .filter(([i]) => !id || i > id)
       .map(([_, elem]) => elem);
-  }
+}
 
-  /** Save the board to disk without preventing multiple simultaneaous saves. Use save() instead */
-  async _unsafe_save() {
+BoardDataMysql.prototype._unsafe_save = async function(){
+  log("save board data use mysql", { name: this.name });
     this.lastSaveDate = Date.now();
     this.clean();
     var file = this.file;
     var tmp_file = backupFileName(file);
     var board_txt = JSON.stringify(this.board);
+    log('board data',this.board)
     if (board_txt === "{}") {
       // empty board
       try {
@@ -95,7 +80,18 @@ class BoardDataMysql extends BoardData {
         return;
       }
     }
-  }
+
+    // save data into mysql database
+    await mysql.insert({boardId:this.name,accountId:'system',data:board_txt}).into('board_data').onConflict('boardId').merge()
+}
+
+/**
+ * Given a board file name, return a name to use for temporary data saving.
+ * @param {string} baseName
+ */
+ function backupFileName(baseName) {
+  var date = new Date().toISOString().replace(/:/g, "");
+  return baseName + "." + date + ".bak";
 }
 
 module.exports.BoardDataMysql = BoardDataMysql
